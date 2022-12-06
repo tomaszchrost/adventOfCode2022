@@ -16,7 +16,7 @@ def get_signal_value(stream):
         subset_to_check = stream[i-3:current_value]
         valid = True
         for j in range(len(subset_to_check)):
-            smaller_subset = subset_to_check[:j:]
+            smaller_subset = subset_to_check[:j]
             if subset_to_check[j] in smaller_subset:
                 valid = False
                 break
@@ -30,7 +30,7 @@ def get_signal_value_part_two(stream):
         subset_to_check = stream[i-13:current_value]
         valid = True
         for j in range(len(subset_to_check)):
-            smaller_subset = subset_to_check[:j:]
+            smaller_subset = subset_to_check[:j]
             if subset_to_check[j] in smaller_subset:
                 valid = False
                 break

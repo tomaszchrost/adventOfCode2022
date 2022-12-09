@@ -1,0 +1,12 @@
+$ cd /
+$ ls
+dir b
+40000 c.txt
+$ cd b
+$ ls
+dir a
+50000 b.txt
+$ cd a
+$ ls
+50000 a.txt
+3000 a2.txt

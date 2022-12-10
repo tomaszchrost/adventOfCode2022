@@ -66,16 +66,12 @@ class RopeBridge:
                 tail = self.rope_knots[i]
                 # location is now diagonally away
                 if abs(head.x - tail.x) > 1 or abs(head.y - tail.y) > 1:
-                    if abs(head.x != tail.x and head.y != tail.y):
-                        if move_x:
-                            tail.y += int(math.copysign(1, head.y - tail.y))
-                        else:
-                            tail.x += int(math.copysign(1, head.x - tail.x))
-                        tail.x += move_x
-                        tail.y += move_y
-                    else:
-                        tail.x += move_x
-                        tail.y += move_y
+                    diff_x = head.x - tail.x
+                    diff_y = head.y - tail.y
+                    move_x = int(math.copysign(1, diff_x)) if diff_x else 0
+                    move_y = int(math.copysign(1, diff_y)) if diff_y else 0
+                    tail.x += move_x
+                    tail.y += move_y
 
             self.visited_locations.add(Position(self.rope_knots[-1].x, self.rope_knots[-1].y))
 

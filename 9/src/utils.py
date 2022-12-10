@@ -37,14 +37,16 @@ class Position:
 
 class RopeBridge:
 
-    def __init__(self):
-        self.head = Position(0, 0)
-        self.tail = Position(0, 0)
+    def __init__(self, knot_count):
         self.visited_locations = set()
-        self.visited_locations.add(Position(self.head.x, self.head.y))
+
+        self.rope_knots = []
+        for i in range(knot_count):
+            self.rope_knots.append(Position(0, 0))
+        self.visited_locations.add(Position(self.rope_knots[-1].x, self.rope_knots[-1].y))
 
     def execute_command(self, command: Command):
-        for i in range(command.move):
+        for _ in range(command.move):
             move_x = 0
             move_y = 0
             if command.direction == Direction.UP:
@@ -56,23 +58,26 @@ class RopeBridge:
             elif command.direction == Direction.LEFT:
                 move_x -= 1
 
-            self.head.x += move_x
-            self.head.y += move_y
+            self.rope_knots[0].x += move_x
+            self.rope_knots[0].y += move_y
 
-            # location is now diagonally away
-            if abs(self.head.x - self.tail.x) > 1 or abs(self.head.y - self.tail.y) > 1:
-                if abs(self.head.x != self.tail.x and self.head.y != self.tail.y):
-                    if move_x:
-                        self.tail.y = self.head.y
+            for i in range(1, len(self.rope_knots)):
+                head = self.rope_knots[i - 1]
+                tail = self.rope_knots[i]
+                # location is now diagonally away
+                if abs(head.x - tail.x) > 1 or abs(head.y - tail.y) > 1:
+                    if abs(head.x != tail.x and head.y != tail.y):
+                        if move_x:
+                            tail.y += int(math.copysign(1, head.y - tail.y))
+                        else:
+                            tail.x += int(math.copysign(1, head.x - tail.x))
+                        tail.x += move_x
+                        tail.y += move_y
                     else:
-                        self.tail.x = self.head.x
-                    self.tail.x += move_x
-                    self.tail.y += move_y
-                else:
-                    self.tail.x += move_x
-                    self.tail.y += move_y
+                        tail.x += move_x
+                        tail.y += move_y
 
-            self.visited_locations.add(Position(self.tail.x, self.tail.y))
+            self.visited_locations.add(Position(self.rope_knots[-1].x, self.rope_knots[-1].y))
 
     def execute_commands(self, commands):
         for command in commands:

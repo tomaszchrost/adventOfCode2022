@@ -4,7 +4,7 @@ import pytest
 import utils
 
 
-def test_part_one():
+def test_part_two():
     keep_away = KeepAway()
     monkeys = [Monkey([79, 98],
                       lambda old: old * 19,
@@ -29,4 +29,5 @@ def test_part_one():
 
     keep_away.monkeys = monkeys
     keep_away.calculate_lcm()
-    assert keep_away.get_monkey_business() == 10605
+    assert keep_away.get_monkey_business(10000, False) == 2713310158
+

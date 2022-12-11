@@ -1,18 +1,21 @@
+import math
+
 from monkey import Monkey
 
 
 class KeepAway:
     def __init__(self):
         self.monkeys = []
+        self.lcm = None
 
-    def add_monkey(self, monkey: Monkey):
-        self.monkeys.append(monkey)
+    def calculate_lcm(self):
+        self.lcm = math.lcm(*(monkey.true_when_divisible_by for monkey in self.monkeys))
 
     def do_round(self, monkeys_get_bored):
         for monkey in self.monkeys:
             items: list = monkey.items.copy()
             for i in range(len(items)):
-                item = items[i] % 9699690
+                item = items[i] % self.lcm
                 item = monkey.inspect(item)
                 if monkeys_get_bored:
                     item = monkey.get_bored(item)

@@ -53,4 +53,5 @@ def part_one_monkey_setup():
     )]
 
     keep_away.monkeys = monkeys
+    keep_away.calculate_lcm()
     return keep_away

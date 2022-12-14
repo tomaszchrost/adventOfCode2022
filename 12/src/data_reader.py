@@ -22,13 +22,13 @@ class DataReader:
             line = line.strip()
             for character in line:
                 if character == 'S':
-                    ord_value = ord('a') - 1
-                    height_map.start_x = len(x_array) + 1
-                    height_map.start_y = len(height_map.height_array) + 1
+                    ord_value = ord('a')
+                    height_map.start_x = len(x_array)
+                    height_map.start_y = len(height_map.height_array)
                 elif character == 'E':
-                    ord_value = ord('z') + 1
-                    height_map.end_x = len(x_array) + 1
-                    height_map.end_y = len(height_map.height_array) + 1
+                    ord_value = ord('z')
+                    height_map.end_x = len(x_array)
+                    height_map.end_y = len(height_map.height_array)
                 else:
                     ord_value = ord(character)
                 x_array.append(ord_value)

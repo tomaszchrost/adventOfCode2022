@@ -2,6 +2,8 @@ from typing import List
 
 
 class Coordinates:
+    __slots__ = 'x', 'y'
+
     def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
@@ -11,6 +13,9 @@ class Coordinates:
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
 
 
 class Sensor:
@@ -84,10 +89,30 @@ class SensorBeaconArrangement:
         return len(cannot_be_beacon)
 
     def get_tuning_frequency(self, min_range=0, max_range=4000000):
-        for y in range(min_range, max_range + 1):
-            print(y)
-            cannot_be_beacon = self.get_cannot_be_x_coordinates_for_y(y, True, min_range, max_range)
-            if len(cannot_be_beacon) != 4000000:
-                for x in range(min_range, max_range + 1):
-                    if x not in cannot_be_beacon:
-                        return x * 4000000 + y
+        possible_coordinates = {}
+        for sensor_beacon in self.sensor_beacons:
+            x = sensor_beacon.sensor.coordinates.x
+            y = sensor_beacon.sensor.coordinates.y
+            for distance in range(sensor_beacon.distance + 1, sensor_beacon.distance + 3):
+                for i in range(distance):
+                    coordinates_array = [Coordinates(x + distance - i, y + i),
+                                         Coordinates(x - distance + i, y - i),
+                                         Coordinates(x + i, y + distance - i),
+                                         Coordinates(x - i, y - distance + i)]
+
+                    for coordinates in coordinates_array:
+                        if coordinates in possible_coordinates:
+                            possible_coordinates[coordinates] += 1
+                        else:
+                            possible_coordinates[coordinates] = 1
+
+        for key in possible_coordinates:
+            if possible_coordinates[key] >= 2 and min_range <= key.x <= max_range and min_range <= key.y <= max_range:
+                valid_coordinates = True
+                for sensor_beacon in self.sensor_beacons:
+                    local_distance = key.distance(sensor_beacon.sensor.coordinates)
+                    if local_distance <= sensor_beacon.distance:
+                        valid_coordinates = False
+                        break
+                if valid_coordinates:
+                    return key.x * 4000000 + key.y

@@ -47,12 +47,12 @@ class ProboscideaVolcanium:
             valve.init_distance_from(self.valves)
 
     def _switch_valve(self,
-                      from_valve: Valve,
+                      distance_from_valve: int,
                       valve: Valve,
                       unvisited_valves: Set[Valve],
                       time_left: int,
                       pressure_released: int):
-        time_left += -(from_valve.distance_from[valve] + 1)
+        time_left += -(distance_from_valve + 1)
         if time_left < 0:
             return pressure_released
         unvisited_valves = unvisited_valves.copy()
@@ -63,14 +63,14 @@ class ProboscideaVolcanium:
 
         max_value = -1
         for valve_to_switch in unvisited_valves:
-            value = self._switch_valve(valve, valve_to_switch, unvisited_valves, time_left, pressure_released)
+            value = self._switch_valve(valve.distance_from[valve_to_switch], valve_to_switch, unvisited_valves, time_left, pressure_released)
             if value > max_value:
                 max_value = value
         return max_value
 
     def _recursive_get_max_pressure(self, time_left: int):
         return max(
-            (self._switch_valve(self.starting_valve, valve, set(self.non_zero_valves), time_left, 0) for valve in self.non_zero_valves))
+            (self._switch_valve(self.starting_valve.distance_from[valve], valve, set(self.non_zero_valves), time_left, 0) for valve in self.non_zero_valves))
 
     def get_non_zero_valves(self):
         non_zero_valves = set()

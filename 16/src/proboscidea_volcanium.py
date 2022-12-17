@@ -49,29 +49,28 @@ class ProboscideaVolcanium:
     def _switch_valve(self,
                       from_valve: Valve,
                       valve: Valve,
-                      switched_valves: Set[Valve],
+                      unvisited_valves: Set[Valve],
                       time_left: int,
                       pressure_released: int):
         time_left += -(from_valve.distance_from[valve] + 1)
         if time_left < 0:
             return pressure_released
-        switched_valves = switched_valves.copy()
-        switched_valves.add(valve)
+        unvisited_valves = unvisited_valves.copy()
+        unvisited_valves.remove(valve)
         pressure_released += time_left * valve.flow_rate
-        if switched_valves == self.non_zero_valves:
+        if not unvisited_valves:
             return pressure_released
 
         max_value = -1
-        for valve_to_switch in self.non_zero_valves:
-            if valve_to_switch not in switched_valves:
-                value = self._switch_valve(valve, valve_to_switch, switched_valves, time_left, pressure_released)
-                if value > max_value:
-                    max_value = value
+        for valve_to_switch in unvisited_valves:
+            value = self._switch_valve(valve, valve_to_switch, unvisited_valves, time_left, pressure_released)
+            if value > max_value:
+                max_value = value
         return max_value
 
     def _recursive_get_max_pressure(self, time_left: int):
         return max(
-            (self._switch_valve(self.starting_valve, valve, set(), time_left, 0) for valve in self.non_zero_valves))
+            (self._switch_valve(self.starting_valve, valve, set(self.non_zero_valves), time_left, 0) for valve in self.non_zero_valves))
 
     def get_non_zero_valves(self):
         non_zero_valves = set()

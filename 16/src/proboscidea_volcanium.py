@@ -1,3 +1,5 @@
+import itertools
+import math
 from typing import Set
 
 
@@ -7,6 +9,12 @@ class Valve:
         self.flow_rate = flow_rate
         self.leads_to = []
         self.distance_from = {}
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
 
     def add_valve_connection(self, valve):
         self.leads_to.append(valve)
@@ -88,4 +96,23 @@ class ProboscideaVolcanium:
         return self._recursive_get_max_pressure(30)
 
     def get_max_pressure_with_elephant(self):
-        return
+        max_value = 0
+        for i in range(len(self.non_zero_valves) // 2 + 1):
+            for subset in itertools.combinations(self.non_zero_valves, i):
+                print(subset)
+                max_value_for_subset = [0, 0]
+                for valve in subset:
+                    value = self._switch_valve(self.starting_valve.distance_from[valve], valve,
+                                               set(subset), 26, 0)
+                    if value > max_value_for_subset[0]:
+                        max_value_for_subset[0] = value
+                other_subset = self.non_zero_valves - set(subset)
+                for valve in other_subset:
+                    value = self._switch_valve(self.starting_valve.distance_from[valve], valve,
+                                               set(other_subset), 26, 0)
+                    if value > max_value_for_subset[1]:
+                        max_value_for_subset[1] = value
+
+                if sum(max_value_for_subset) > max_value:
+                    max_value = sum(max_value_for_subset)
+        return max_value
